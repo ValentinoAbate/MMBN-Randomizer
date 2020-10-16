@@ -80,9 +80,9 @@ public class BN6RandomizerContext extends RandomizerContext {
 		status("Processing traders...");
 		randomizeTraders(romId, rom, chipLibrary);
 
-		setProgress((100 * 6) / 7);
-		status("Processing battles...");
-		randomizeBattles(romId, rom);
+//		setProgress((100 * 6) / 7);
+//		status("Processing battles...");
+//		randomizeBattles(romId, rom);
 
 		setProgress(100);
 	}
@@ -464,6 +464,8 @@ public class BN6RandomizerContext extends RandomizerContext {
 				= new BN456RewardProducer(library);
 		ItemProvider provider
 				= new ItemProvider(this, producer);
+		provider.setCodeOnly(true);
+		provider.setUseCodeMapping(true);
 		RepeatStrategy dropRepeatStrat
 				= new RepeatStrategy(provider, 401 * 2 * 5 * 2);
 
@@ -472,14 +474,17 @@ public class BN6RandomizerContext extends RandomizerContext {
 		dropRepeatStrat.execute(rom);
 
 		// Randomize battle Mystery Data
+		ItemProvider mdProvider
+				= new ItemProvider(this, producer);
 		RepeatStrategy mdRepeatStrat
-				= new RepeatStrategy(provider, 8 * 8);
+				= new RepeatStrategy(mdProvider, 8 * 8);
 
 		rom.setRealPosition(getVersionAddress(0x0DFAF4, romId));
 		rom.setPosition(rom.readInt32());
 		mdRepeatStrat.execute(rom);
 
 		runProvider(provider, rom);
+		runProvider(mdProvider, rom);
 	}
 
 	protected void randomizeMysteryData(String romId, ByteStream rom,
